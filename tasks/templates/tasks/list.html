@@ -1,72 +1,86 @@
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+{% extends 'tasks/base.html' %}
 
-<style>
+{% block title %}
+Task Manager
+{% endblock %}
 
-	body{
-		background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
-	}
+{% block content %}
+    <a href="{% url 'add_task' %}" class="btn btn-primary mb-4 w-100">
+        <i class="fa fa-plus-circle"></i>
+        &nbsp;&nbsp;Add New Task
+    </a>
+    <br/>
 
-	input{
-		width: 100%;
-		padding: 12px 20px;
-		margin: 8px 0;
-		box-sizing: border-box;
-	}
+    <h5>Pending Tasks</h5>
+    <hr/>
+    {% for task in tasks %}
+        <div class="border px-4 py-2 rounded-lg mb-3">
+            <form autocomplete="off" method="post" class="d-flex align-items-center">
+                {% csrf_token %}
+                <div class="custom-control custom-switch actve">
+                    <input class="custom-control-input" type="checkbox" name="task_{{ task.id }}"
+                           value="1"
+                           id="customSwitch{{ task.id }}"
+                           {% if task.complete %} checked="" {% endif %} onchange="this.form.submit();" />
+                    <input type="hidden" name="task_{{ task.id }}" value="0" />
+                  <label class="custom-control-label" for="customSwitch{{ task.id }}"></label>
+                </div>
+                <button type="button" data-toggle="collapse" data-target="#desc{{ task.id }}" class="btn text-left px-0 flex-grow-1 mx-3" >
+                    <span class="ml-4">{{ task.title }}</span>
+                </button>
+                <small class="ml-auto d-none d-md-block">
+                    {% if task.due.timestamp > time %}
+                        <i class="fa fa-calendar-o text-primary"></i>
+                        {{ task.due }}
+                    {% else %}
+                        <b class="text-danger"><i class="fa fa-exclamation-circle"></i> DUE</b>
+                    {% endif %}
+                </small>
+            </form>
+            <div class="collapse" id="desc{{ task.id }}">
+                <hr/>
+                <div class="ml-auto mb-2 d-md-none">
+                    <i class="fa fa-calendar-o text-primary"></i>
+                    &nbsp;{{ task.due }}<br/>
+                </div>
+                <p>{{ task.description }}</p>
+                <a href="{% url 'delete' task.id %}" onclick="event.preventDefault(); e = this; bootbox.confirm('Are you sure, you really want to delete this task?', function(f){ if( f ) { location.href = e.href; } });" class="btn btn-danger btn-sm mb-3">
+                    Delete this task
+                </a>
+            </div>
+        </div>
+    {% endfor %}
 
-	input::placeholder {
-	  color: #d3d3d3;
-	}
-
-	.submit{
-		background-color: #6BA3E8;
-	}
-
-	.center-column{
-		width:600px;
-		margin: 20px auto;
-		padding:20px;
-		background-color: #fff;
-		border-radius: 3px;
-		box-shadow: 6px 2px 30px 0px rgba(0,0,0,0.75);
-	}
-
-	.item-row{
-		background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 500%);
-		margin: 10px;
-		padding: 20px;
-		border-radius: 3px;
-		color: #fff;
-		font-size: 16px;
-		box-shadow: 0px -1px 10px -4px rgba(0,0,0,0.75);
-	}
-
-	.btn-danger{
-		background-color: #ffae19;
-		border-color: #e59400;
-	}
-
-</style>
-
-<div class="center-column mt-5">
-
-	<form method="POST" action="/">
-		{% csrf_token %}
-		{{form.title}}
-		<input class="btn btn-info" type="submit" name="Create Task">
-	</form>
-
-	<div class="todo-list">
-
-	{% for task in tasks %}
-		<div class="item-row">
-			{% if task.complete == True %}
-			<strike>{{task}}</strike>
-			{% else %}
-			<span>{{task}}</span>
-			{% endif %}
-			<a class="btn btn-sm btn-danger float-right ml-2" href="{% url 'delete' task.id %}">Delete</a>
-			<a class="btn btn-sm btn-info float-right" href="{% url 'update_task' task.id %}">Update</a>
-		</div>
-	{% endfor %}
-	</div>
-</div>
+    <br/>
+    <h5>Completed Tasks</h5>
+    <hr/>
+    {% for task in completed %}
+        <div class="border px-4 py-2 rounded-lg mb-3">
+            <form autocomplete="off" method="post" class="d-flex align-items-center">
+                {% csrf_token %}
+                <div class="custom-control custom-switch actve">
+                    <input class="custom-control-input" type="checkbox" name="task_{{ task.id }}"
+                           value="1"
+                           id="customSwitch{{ task.id }}"
+                           {% if task.complete %} checked="" {% endif %} onchange="this.form.submit();" />
+                    <input type="hidden" name="task_{{ task.id }}" value="0" />
+                  <label class="custom-control-label" for="customSwitch{{ task.id }}"></label>
+                </div>
+                <button type="button" data-toggle="collapse" data-target="#desc{{ task.id }}" class="btn text-left px-0 flex-grow-1 mx-3" >
+                    <span class="ml-4">{{ task.title }}</span>
+                </button>
+            </form>
+            <div class="collapse" id="desc{{ task.id }}">
+                <hr/>
+                <div class="ml-auto mb-2 d-md-none">
+                    <i class="fa fa-calendar-o text-primary"></i>
+                    &nbsp;{{ task.due }}<br/>
+                </div>
+                <p>{{ task.description }}</p>
+                <a href="{% url 'delete' task.id %}" onclick="event.preventDefault(); e = this; bootbox.confirm('Are you sure, you really want to delete this task?', function(f){ if( f ) { location.href = e.href; } });" class="btn btn-danger btn-sm mb-3">
+                    Delete this task
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

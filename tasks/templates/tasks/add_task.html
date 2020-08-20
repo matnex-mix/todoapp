@@ -1,0 +1,24 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}
+Add Task
+{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">Add Task</h4>
+
+<form method="POST">
+	{% csrf_token %}
+
+	{% for e in form %}
+        <div class="my-3">
+            <input value="{{e.value|default:''}}" type="{% if e.name == 'due' %}datetime-local{% elif e.name == 'complete' %}hidden{% else %}text{% endif %}" name="{{e.name}}" placeholder="{{e.label}}" class="form-control" />
+            {% if e.errors %}
+                <br/>
+                <small class="text-weight-bold text-danger">{{ e.errors }}</small>
+            {% endif %}
+        </div>
+    {% endfor %}
+	<input type="submit" name="submit" value="Add Task" class="btn btn-primary mt-3" />
+</form>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+
+        <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}" />
+        <link rel="stylesheet" href="{% static 'font-awesome.min.css' %}" />
+
+        <script src="{% static 'jquery.min.js' %}"></script>
+        <script src="{% static 'bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'bootbox.min.js' %}"></script>
+    </head>
+
+    <body class="p-4 p-md-5" style="background-image: url(); background-repeat: no-repeat; background-size: cover; background-color: royalblue;">
+        <h2 class="mb-5" align="center" style="font-family: 'Tekton Pro'">
+            <b>Task Manager</b>
+        </h2>
+        <div class="w-100 mx-auto bg-white p-4 shadow-sm" style="max-width: 600px; border-radius: 25px;">
+            {% block content %}{% endblock %}
+        </div>
+        <p align="center">
+            <br/>
+            <b>&copy; OyeroTech. 2020</b>
+        </p>
+    </body>
+</html>
